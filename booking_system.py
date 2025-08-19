@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, List
 
 @dataclass(order=True)
@@ -63,6 +63,6 @@ if __name__ == "__main__":
     # Simple demonstration
     system = BookingSystem(DEFAULT_BOXES)
     now = datetime.now()
-    booking = system.reserve("alice", "Box 1", now, now.replace(hour=now.hour + 1))
+    booking = system.reserve("alice", "Box 1", now, now + timedelta(hours=1))
     print("Reserved:", booking)
     print("Schedule for Box 1:", system.schedule_for_box("Box 1"))
