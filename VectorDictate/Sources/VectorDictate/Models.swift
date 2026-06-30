@@ -144,10 +144,10 @@ final class AppSettings: ObservableObject {
         self.model = TranscriptionModel(rawValue: defaults.string(forKey: Keys.model) ?? "") ?? .whisper1
         self.language = defaults.string(forKey: Keys.language) ?? ""
 
-        let storedThreshold = defaults.object(forKey: Keys.silenceThresholdDb) as? Float
+        let storedThreshold = (defaults.object(forKey: Keys.silenceThresholdDb) as? NSNumber)?.floatValue
         self.silenceThresholdDb = storedThreshold ?? -35.0
 
-        let storedDuration = defaults.object(forKey: Keys.silenceDurationSeconds) as? Double
+        let storedDuration = (defaults.object(forKey: Keys.silenceDurationSeconds) as? NSNumber)?.doubleValue
         self.silenceDurationSeconds = storedDuration ?? 1.6
 
         if defaults.object(forKey: Keys.autoPasteEnabled) == nil {
@@ -156,7 +156,7 @@ final class AppSettings: ObservableObject {
             self.autoPasteEnabled = defaults.bool(forKey: Keys.autoPasteEnabled)
         }
 
-        let storedMax = defaults.object(forKey: Keys.maxRecordingSeconds) as? Double
+        let storedMax = (defaults.object(forKey: Keys.maxRecordingSeconds) as? NSNumber)?.doubleValue
         self.maxRecordingSeconds = storedMax ?? 120.0
     }
 

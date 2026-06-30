@@ -7,7 +7,10 @@ enum KeychainHelper {
     private static let service = "com.vectordictate.app"
     private static let account = "openai-api-key"
 
-    static func save(apiKey: String) {
+    /// Returns whether the key was actually persisted. Callers should
+    /// surface failures rather than assuming success.
+    @discardableResult
+    static func save(apiKey: String) -> Bool {
         let data = Data(apiKey.utf8)
 
         let query: [String: Any] = [
@@ -19,13 +22,14 @@ enum KeychainHelper {
         // Remove any existing item first so this also works as an update.
         SecItemDelete(query as CFDictionary)
 
-        guard !data.isEmpty else { return }
+        guard !data.isEmpty else { return true }
 
         var attributes = query
         attributes[kSecValueData as String] = data
         attributes[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
 
-        SecItemAdd(attributes as CFDictionary, nil)
+        let status = SecItemAdd(attributes as CFDictionary, nil)
+        return status == errSecSuccess
     }
 
     static func loadAPIKey() -> String? {

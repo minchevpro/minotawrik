@@ -9,6 +9,7 @@ struct SettingsView: View {
 
     @State private var apiKey: String = KeychainHelper.loadAPIKey() ?? ""
     @State private var apiKeySaved = false
+    @State private var apiKeySaveFailed = false
     @State private var micStatus = PermissionsManager.microphoneStatus()
     @State private var accessibilityTrusted = PasteSimulator.isAccessibilityTrusted()
 
@@ -37,13 +38,19 @@ struct SettingsView: View {
                     .textFieldStyle(.roundedBorder)
                 HStack {
                     Button(apiKeySaved ? "Сохранено ✓" : "Сохранить ключ") {
-                        KeychainHelper.save(apiKey: apiKey)
-                        apiKeySaved = true
+                        let succeeded = KeychainHelper.save(apiKey: apiKey)
+                        apiKeySaved = succeeded
+                        apiKeySaveFailed = !succeeded
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { apiKeySaved = false }
                     }
                     .disabled(apiKey.isEmpty)
                     Link("Получить ключ на platform.openai.com", destination: URL(string: "https://platform.openai.com/api-keys")!)
                         .font(.caption)
+                }
+                if apiKeySaveFailed {
+                    Text("Не удалось сохранить ключ в Keychain. Попробуйте ещё раз.")
+                        .font(.caption)
+                        .foregroundColor(.red)
                 }
 
                 Picker("Модель распознавания", selection: $settings.model) {

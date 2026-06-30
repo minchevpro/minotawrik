@@ -86,10 +86,10 @@ struct DictationPanelView: View {
         case .recording(_, let elapsed):
             Text("Запись… \(formatted(elapsed))")
                 .font(.system(size: 13, weight: .semibold))
-            Text("Enter — отправить · Esc — отмена · ⏎ хоткей — стоп")
+            Text(hintText)
                 .font(.system(size: 10))
                 .foregroundColor(.secondary)
-                .lineLimit(1)
+                .lineLimit(2)
         case .transcribing:
             Text("Распознавание текста…")
                 .font(.system(size: 13, weight: .semibold))
@@ -99,6 +99,13 @@ struct DictationPanelView: View {
                 .foregroundColor(.orange)
                 .lineLimit(2)
         }
+    }
+
+    private var hintText: String {
+        guard PasteSimulator.isAccessibilityTrusted() else {
+            return "Enter/Esc сейчас не блокируются (нет доступа Accessibility) · используйте Stop или хоткей"
+        }
+        return "Enter — отправить · Esc — отмена · хоткей — стоп"
     }
 
     private func formatted(_ interval: TimeInterval) -> String {
